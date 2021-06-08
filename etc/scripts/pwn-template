@@ -1,0 +1,19 @@
+#!/usr/bin/python3
+
+from subprocess import Popen, PIPE
+import sys, os
+
+templates, _ , = Popen([
+    'pwn', 'template', '--quiet', sys.argv[1]
+], stdout=PIPE, stderr=open(os.devnull, 'wb')).communicate()
+
+result = []
+for i, t in enumerate(templates.splitlines()):
+    if i not in [6, 7, 9, 19, 20]:
+       result.append(t.decode())
+
+    if i == 1:
+        result.append('# author: bhrdn\n')
+
+result[len(result)-3] = '\n' * 3 + 'io.sendline(payload)'
+print('\n'.join(result))
